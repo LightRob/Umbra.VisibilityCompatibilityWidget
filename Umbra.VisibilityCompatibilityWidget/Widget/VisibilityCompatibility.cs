@@ -5,8 +5,9 @@ using Dalamud.Plugin.Services;
 using Dalamud.Game.Gui.Toast;
 using Umbra.Game;
 using FFXIVClientStructs.FFXIV.Common.Component.BGCollision;
+using Una.Drawing;
 
-namespace Umbra.VisibilityCompatibility.Widgets;
+namespace Umbra.VisibilityCompatibilityWidget.Widget;
 
 [InteropToolbarWidget(
     "VisibilityCompatibility",
@@ -18,7 +19,7 @@ public class VisibilityCompatibility(
     WidgetInfo                  info,
     string?                     guid         = null,
     Dictionary<string, object>? configValues = null
-) : DefaultToolbarWidget(info, guid, configValues)
+) : StandardToolbarWidget(info, guid, configValues)
 {
     public bool enabled = false;
     public override MenuPopup? Popup { get; } = null;
@@ -27,64 +28,46 @@ public class VisibilityCompatibility(
 
     private IToastGui ToastGui { get; set; } = Framework.Service<IToastGui>();
 
+    protected override StandardWidgetFeatures Features =>
+        StandardWidgetFeatures.Text |
+        StandardWidgetFeatures.Icon;
+
     protected override IEnumerable<IWidgetConfigVariable> GetConfigVariables()
     {
         return [
-            new BooleanWidgetConfigVariable(
-               "Decorate",
-                I18N.Translate("Widgets.DefaultToolbarWidget.Config.Decorate.Name"),
-                I18N.Translate("Widgets.DefaultToolbarWidget.Config.Decorate.Description"),
-                true) { Category = I18N.Translate("Widget.ConfigCategory.WidgetAppearance") },
-            new BooleanWidgetConfigVariable(
-                "DesaturateIcon",
-                I18N.Translate("Widgets.DefaultToolbarWidget.Config.DesaturateIcon.Name"),
-                I18N.Translate("Widgets.DefaultToolbarWidget.Config.DesaturateIcon.Description"),
-                false) { Category = I18N.Translate("Widget.ConfigCategory.WidgetAppearance") },
+            ..base.GetConfigVariables(),
             new IntegerWidgetConfigVariable(
                 "IconSize",
-                I18N.Translate("Widgets.DefaultToolbarWidget.Config.IconSize.Name"),
-                I18N.Translate("Widgets.DefaultToolbarWidget.Config.IconSize.Description"),
+                I18N.Translate("Widgets.Standard.Config.IconSize.Name"),
+                I18N.Translate("Widgets.Standard.Config.IconSize.Description"),
                 0,
                 0,
                 42) { Category = I18N.Translate("Widget.ConfigCategory.WidgetAppearance") }
         ];
     }
 
-    protected override void Initialize()
+    protected override void OnLoad()
     {
-        SetLeftIcon(60647);
-        SetLabel(null);
-        Una.Drawing.Color c = new(91, 91, 91);
-        SetIconColor(c);
-
+        SetGameIconId(60647);
         Node.OnClick += _ => SwitchVisibilityState();
         Node.OnRightClick += _ => OpenVisibilityConfig();
     }
 
-    protected override void OnUpdate()
-    {
-        SetGhost(!GetConfigValue<bool>("Decorate"));
-        LeftIconNode.Style.ImageGrayscale = GetConfigValue<bool>("DesaturateIcon");
-        SetIconSize(GetConfigValue<int>("IconSize"));
-        
-    }
-
     private void SwitchVisibilityState ()
     {
-        Una.Drawing.Color c;
         if (enabled)
         {
             _chatSender.Send("/pvis enabled off");
-            ToastGui.ShowNormal($"Players visible", new ToastOptions { Speed = ToastSpeed.Fast });
-            c = new(91, 91, 91);
+            ToastGui.ShowNormal("Players visible", new ToastOptions { Speed = ToastSpeed.Fast });
+            SetConfigValue("DesaturateIcon", true);
         }
         else
         {
             _chatSender.Send("/pvis enabled on");
-            ToastGui.ShowNormal($"Players not visible", new ToastOptions { Speed = ToastSpeed.Fast });
-            c = new(255, 255, 255);
+            ToastGui.ShowNormal("Players not visible", new ToastOptions { Speed = ToastSpeed.Fast });
+            SetConfigValue("DesaturateIcon", false);
         }
-        SetIconColor(c);
+
         enabled = !enabled;
     }
 
