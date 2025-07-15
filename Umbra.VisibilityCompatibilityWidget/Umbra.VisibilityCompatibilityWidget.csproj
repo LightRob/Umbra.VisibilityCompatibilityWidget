@@ -22,11 +22,11 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Authors>Your Name</Authors>
-    <Company>Sample Company</Company>
+    <Authors>Light</Authors>
+    <Company>Light</Company>
     <Version>1.0.2.0</Version>
-    <Description>A description</Description>
-    <Copyright>(C)2024</Copyright>
+    <Description>Add a Umbra widget for the plugin Visibility</Description>
+    <Copyright>(C)2025</Copyright>
     <PackageProjectUrl></PackageProjectUrl>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
     <IsPackable>false</IsPackable>
