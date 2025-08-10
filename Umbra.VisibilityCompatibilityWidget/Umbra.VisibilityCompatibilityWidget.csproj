@@ -24,7 +24,7 @@
   <PropertyGroup>
     <Authors>Light</Authors>
     <Company>Light</Company>
-    <Version>1.0.2.0</Version>
+    <Version>1.0.3.0</Version>
     <Description>Add a Umbra widget for the plugin Visibility</Description>
     <Copyright>(C)2025</Copyright>
     <PackageProjectUrl></PackageProjectUrl>
